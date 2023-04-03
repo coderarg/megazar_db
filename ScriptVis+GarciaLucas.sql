@@ -95,6 +95,41 @@ CREATE OR REPLACE VIEW mayores_ganancias AS
 SELECT *
 FROM mayores_ganancias;
 
-#4. Vista de clientes que más compran
+#4. Vista de top 10 clientes que más compran para campaña de e-mail marketing con descuento exclusivo
+CREATE OR REPLACE VIEW clientes_top10 AS
+	SELECT v.id_cliente,
+	CONCAT(c_nombres, ' ', c_apellidos) nombre_completo,
+	c_email,
+	SUM(v_precio_t) monto_total
+	FROM ventas v 
+	LEFT JOIN
+	clientes c
+	ON v.id_cliente = c.id_cliente
+	GROUP BY 1
+	ORDER BY monto_total DESC
+	LIMIT 10;
+
+#Verifico vista 'clientes_top10'
+SELECT *
+FROM clientes_top10;
+
 #5 Recupero de Inversión. (buscar primer fecha de venta y última fecha de venta. #tomar la diferencia en días y la ganancia bruta generada.
 #Mostrar cuantos días se necesita para recuperar la inversión.
+
+CREATE OR REPLACE VIEW recupero_inversion AS
+	SELECT COUNT(id_compra) compras_realizadas,
+	COUNT(id_venta) ventas_realizadas,
+	SUM(com_precio_t) inversion,
+	SUM(v_precio_t) ganancia_bruta,
+	(SUM(com_precio_t) - SUM(v_precio_t)) no_recuperado,
+	datediff(max(v_fecha), max(com_fecha)) tiempo_inversion, ##Diferencia de días desde la última inversión hasta la última venta
+	(SUM(v_precio_t) / datediff(max(v_fecha), max(com_fecha))) recupero_por_dia,
+	((SUM(com_precio_t) - SUM(v_precio_t)) / (SUM(v_precio_t) / datediff(max(v_fecha), max(com_fecha)))) estimacion_dias_recupero_inversion
+	FROM compras c
+	LEFT JOIN
+	ventas v
+	ON c.id_compra = v.id_venta;
+
+#Verificio vista 'recupero_inversion'
+SELECT *
+FROM recupero_inversion;
