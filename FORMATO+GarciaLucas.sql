@@ -12,13 +12,12 @@ BEGIN
     
     RETURN COALESCE(inversion, '0');
 END $$
-
+DELIMITER ;
 ##Verifico que funcione la función viendo el monto de las compras de Octubre de 2021
 SELECT inversion_entre_fechas('2021-10-01 00:00:00', '2021-10-31 23:59:00') AS inversion;
 
-
-## Función que devuelve la cantidad de stock de un producto específico.
 DELIMITER $$
+## Función que devuelve la cantidad de stock de un producto específico.
 CREATE FUNCTION `stock_de_producto`(id_del_producto INT) RETURNS VARCHAR(50)
 DETERMINISTIC
 BEGIN
@@ -45,7 +44,7 @@ BEGIN
     
     RETURN COALESCE(stock, 'Producto No Encontrado');
 END $$
-
+DELIMITER ;
 ##Verifico stock de productos según id
 SELECT stock_de_producto(1);
 SELECT stock_de_producto(3);
