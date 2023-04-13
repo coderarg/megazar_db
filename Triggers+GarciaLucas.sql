@@ -1,5 +1,5 @@
 #Triggers
-#Tabla para logs de compras y ventas
+#Tabla para logs
 
 CREATE TABLE log_megazar (
 usuario VARCHAR(50) NOT NULL,
