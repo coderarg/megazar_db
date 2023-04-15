@@ -39,7 +39,7 @@ AFTER INSERT ON ventas
 FOR EACH ROW
 BEGIN
 
-	DECLARE idCompra INT;
+	DECLARE idVenta INT;
     DECLARE idProducto INT;
     DECLARE stock INT;
     SET idVenta = NEW.id_venta;
