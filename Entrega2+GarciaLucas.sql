@@ -621,6 +621,9 @@ BEGIN
     VALUES (USER(), 'compra', idCompra, NOW());
 END $$
 
+DELIMITER ;
+
+DELIMITER $$
 ##Ejemplo para ventas
 CREATE TRIGGER update_stock_ventas
 AFTER INSERT ON ventas
