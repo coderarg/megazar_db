@@ -1,11 +1,12 @@
-##Backup de Tablas:
-# Categorias
-# Clientes
-# Proveedores
-# Productos
-# Ventas
-# Compras
-
+/*
+		##Backup de Tablas
+1. Categorias
+2. Productos
+3. Clientes
+4. Proveedores
+5. Ventas
+6. Compras	
+*/
 
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
@@ -25,6 +26,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `categorias`
+--
+
+DROP TABLE IF EXISTS `categorias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categorias` (
+  `id_categoria` int NOT NULL AUTO_INCREMENT,
+  `cat_nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `categorias`
 --
 
@@ -33,6 +48,31 @@ LOCK TABLES `categorias` WRITE;
 INSERT INTO `categorias` VALUES (1,'cocina'),(2,'vajilla'),(3,'herramientas'),(4,'decoracion'),(5,'deportes'),(6,'libreria'),(7,'juegos');
 /*!40000 ALTER TABLE `categorias` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `clientes`
+--
+
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clientes` (
+  `id_cliente` int NOT NULL AUTO_INCREMENT,
+  `c_cuit_cuil` varchar(50) NOT NULL,
+  `c_nombres` varchar(50) NOT NULL,
+  `c_apellidos` varchar(50) NOT NULL,
+  `c_email` varchar(50) NOT NULL,
+  `c_telefono` varchar(50) DEFAULT NULL,
+  `c_celular` varchar(50) NOT NULL,
+  `c_direccion` varchar(100) DEFAULT NULL,
+  `c_provincia` varchar(50) NOT NULL,
+  `c_pais` varchar(50) NOT NULL,
+  `c_comentario` varchar(1000) DEFAULT NULL,
+  `c_conversion` tinyint(1) NOT NULL,
+  `c_fecha_contacto` datetime NOT NULL,
+  PRIMARY KEY (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `clientes`
@@ -45,6 +85,34 @@ INSERT INTO `clientes` VALUES (1,'20994242486','Fabiola','Fernandez','fabiolafer
 UNLOCK TABLES;
 
 --
+-- Table structure for table `compras`
+--
+
+DROP TABLE IF EXISTS `compras`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `compras` (
+  `id_compra` int NOT NULL AUTO_INCREMENT,
+  `id_proveedor` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `id_categoria` int NOT NULL,
+  `com_cantidad` int NOT NULL,
+  `com_precio_u` float NOT NULL,
+  `com_descuento` float NOT NULL,
+  `com_precio_t` float NOT NULL,
+  `com_fecha` datetime NOT NULL,
+  `com_codigo_factura` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_compra`),
+  KEY `id_proveedor` (`id_proveedor`),
+  KEY `id_producto` (`id_producto`),
+  KEY `id_categoria` (`id_categoria`),
+  CONSTRAINT `compras_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`),
+  CONSTRAINT `compras_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`),
+  CONSTRAINT `compras_ibfk_3` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `compras`
 --
 
@@ -53,6 +121,27 @@ LOCK TABLES `compras` WRITE;
 INSERT INTO `compras` VALUES (1,5,4,1,30,2500,0,75000,'2021-10-02 01:23:00','2022001'),(2,6,35,7,30,1900,0,57000,'2021-10-04 03:05:00','2022002'),(3,3,15,3,27,3400,0,91800,'2021-10-04 22:15:00','2022003'),(4,3,39,6,23,1300,0,29900,'2021-10-04 22:15:00','2022003'),(5,15,36,3,23,700,0,16100,'2021-10-07 16:45:00','2022004'),(6,8,25,1,24,800,0,19200,'2021-10-08 08:30:00','2022005'),(7,10,33,1,23,450,0,10350,'2021-10-10 03:00:00','2022006'),(8,5,19,7,29,200,0,5800,'2021-10-12 13:45:00','2022007'),(9,2,3,1,22,1500,0,33000,'2021-10-14 04:00:00','2022008'),(10,11,20,5,28,3000,0,84000,'2021-10-15 20:15:00','2022009'),(11,4,6,1,26,3000,0,78000,'2021-10-16 11:45:00','20220010'),(12,7,37,4,24,1500,0,36000,'2021-10-18 02:30:00','20220011'),(13,6,18,5,23,1000,0,23000,'2021-10-19 22:45:00','20220012'),(14,14,34,5,29,1400,0,40600,'2021-10-21 13:15:00','20220013'),(15,19,1,3,26,3000,0,78000,'2021-10-22 05:30:00','20220014'),(16,20,14,1,21,6000,12600,113400,'2021-10-24 15:45:00','20220015'),(17,5,12,5,25,2300,0,57500,'2021-10-26 06:00:00','20220016'),(18,2,28,3,28,2400,0,67200,'2021-10-27 18:30:00','20220017'),(19,5,24,2,30,3750,11250,101250,'2021-10-29 09:45:00','20220018'),(20,8,17,3,22,1500,0,33000,'2021-10-30 23:00:00','20220019'),(21,10,2,4,29,1000,0,29000,'2021-11-01 21:30:00','20220020'),(22,1,12,5,22,2300,0,50600,'2021-11-02 11:15:00','20220021'),(23,5,16,4,25,600,0,15000,'2021-11-04 03:30:00','20220022'),(24,10,33,1,23,1400,0,32200,'2021-11-05 14:00:00','20220023'),(25,18,38,4,25,1700,0,42500,'2021-11-07 00:30:00','20220024'),(26,19,18,5,28,1000,0,28000,'2021-11-08 19:45:00','20220025'),(27,5,19,7,23,200,0,4600,'2021-11-10 08:15:00','20220026'),(28,8,7,3,27,1750,0,47250,'2021-11-11 22:30:00','20220027'),(29,8,40,7,24,3500,0,84000,'2021-11-11 22:30:00','20220027'),(30,6,29,5,21,1500,0,31500,'2021-11-15 06:00:00','20220028'),(31,20,27,7,26,700,0,18200,'2021-11-16 21:15:00','20220029'),(32,6,31,7,29,1700,0,49300,'2021-11-18 10:45:00','20220030'),(33,10,8,1,27,8000,21600,194400,'2021-11-19 22:00:00','20220031'),(34,16,24,2,30,3750,11250,101250,'2021-11-21 14:30:00','20220032'),(35,17,9,4,24,500,0,12000,'2021-11-23 06:45:00','20220033'),(36,19,21,5,26,1500,0,39000,'2021-11-24 20:00:00','20220034'),(37,5,5,2,25,2000,0,50000,'2021-11-26 09:30:00','20220035'),(38,18,3,1,25,1500,0,37500,'2021-11-28 01:45:00','20220036'),(39,19,31,7,28,1700,0,47600,'2021-11-29 16:15:00','20220037'),(40,20,26,1,25,450,0,11250,'2021-12-01 07:30:00','20220038'),(41,6,19,7,25,200,0,5000,'2021-12-02 22:00:00','20220039'),(42,20,32,3,23,3300,0,75900,'2021-12-04 13:15:00','20220040'),(43,8,30,7,26,2100,0,54600,'2021-12-06 04:30:00','20220041'),(44,9,13,1,25,4500,11250,101250,'2021-12-07 18:45:00','20220042'),(45,18,34,5,22,1400,0,30800,'2021-12-09 10:00:00','20220043'),(46,16,37,4,27,1500,0,40500,'2021-12-11 04:30:00','20220044'),(47,15,23,5,21,700,0,14700,'2021-12-14 01:15:00','20220045'),(48,7,10,4,25,900,0,22500,'2021-12-15 18:45:00','20220046'),(49,1,22,5,23,800,0,18400,'2021-12-18 05:00:00','20220047'),(50,4,11,3,20,700,0,14000,'2021-12-20 13:30:00','20220048');
 /*!40000 ALTER TABLE `compras` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `productos`
+--
+
+DROP TABLE IF EXISTS `productos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productos` (
+  `id_producto` int NOT NULL AUTO_INCREMENT,
+  `p_codigo` varchar(50) NOT NULL,
+  `p_nombre` varchar(200) NOT NULL,
+  `id_categoria` int NOT NULL,
+  `id_proveedor` int NOT NULL,
+  PRIMARY KEY (`id_producto`),
+  KEY `id_categoria` (`id_categoria`),
+  KEY `id_proveedor` (`id_proveedor`),
+  CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`),
+  CONSTRAINT `productos_ibfk_2` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `productos`
@@ -65,6 +154,27 @@ INSERT INTO `productos` VALUES (1,'8461','Lupa Plegable Luz 10 Led Manicura Pedi
 UNLOCK TABLES;
 
 --
+-- Table structure for table `proveedores`
+--
+
+DROP TABLE IF EXISTS `proveedores`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `proveedores` (
+  `id_proveedor` int NOT NULL AUTO_INCREMENT,
+  `prov_cuit_cuil` varchar(50) NOT NULL,
+  `prov_nombre` varchar(50) NOT NULL,
+  `prov_telefono` varchar(50) DEFAULT NULL,
+  `prov_celular` varchar(50) NOT NULL,
+  `prov_email` varchar(50) DEFAULT NULL,
+  `prov_direccion` varchar(100) DEFAULT NULL,
+  `prov_provincia` varchar(50) NOT NULL,
+  `prov_pais` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_proveedor`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `proveedores`
 --
 
@@ -73,6 +183,34 @@ LOCK TABLES `proveedores` WRITE;
 INSERT INTO `proveedores` VALUES (1,'30177254933','El Gran Pez SRL','1184738991','1100098271','info@elgranpezsrl.com','Lavalle 2133, C1051 CABA','Buenos Aires','Argentina '),(2,'30646444626','Plásticos y Más SRL','1107134733','1138699778','info@plásticosymássrl.com','Viamonte 2265, C1056 CABA','Buenos Aires','Argentina '),(3,'30927087299','Lola Mayorista','1129475483','1177490603','contacto@lolamayorista.com','Jose Alico 1150, 1770 Aldo Bonzi, Buenos Aires Province, Argentina','Buenos Aires','Argentina '),(4,'30681156390','Design Cups','1120917450','1165232629','info@designcups.com','Tucumán 2541, C1052 CABA','Buenos Aires','Argentina '),(5,'30831708216','Bazar Mayorista','1156945129','1159934670','contacto@bazarmayorista.com','Lavalle 2020, C1051 ABF, Buenos Aires','Buenos Aires','Argentina '),(6,'30859037191','Puerto 5','1115382191','1160001262','info@puerto5.com','Tte. Gral. Juan Domingo Perón 2378, C1040 AAL, Buenos Aires','Buenos Aires','Argentina '),(7,'30412759394','Buenos Aires Bazar','1125065206','1152182759','info@buenosairesbazar.com','Av. Rivadavia 3940, C1204AAR CABA','Buenos Aires','Argentina '),(8,'30709705193','Diverthia','1107973031','1172985984','info@diverthia.com','Av. Corrientes 2115 1ER PISO, C1045 CABA','Buenos Aires','Argentina '),(9,'30782350783','MajuOnce','1166039941','1157035517','contacto@majuonce.com','Valentín Gómez 2715, C1028AAH Once, Buenos Aires','Buenos Aires','Argentina '),(10,'30891896410','El Paso','1162708507','1159463640','info@elpaso.com','Pasteur 360, C1028 CABA','Buenos Aires','Argentina '),(11,'30126205305','Novopack','1180640270','1183142675','info@novopack.com','Joaquín V. González 1080, C1407 CZT, Buenos Aires','Buenos Aires','Argentina '),(12,'30767490895','Soifer Hermanos','1101594905','1153350817','info@soiferhermanos.com','Bahía Blanca 1445, C1407 ACA, Buenos Aires','Buenos Aires','Argentina '),(13,'30787599807','Hiperpack','1155109892','1158808206','contacto@hiperpack.com',' Larrea 415, C1030 AAI, Buenos Aires','Buenos Aires','Argentina '),(14,'30963351183','Horizonte','1123412622','1110774173','contacto@horizonte.com','Sarmiento 2426, C1044 AAN, Buenos Aires','Buenos Aires','Argentina '),(15,'30394943237','Antonio','1149616815','1185857615','contacto@antonio.com','Av. Jujuy 1220, C1247ABN CABA','Buenos Aires','Argentina '),(16,'30478113034','Guru-Kirpa','1145515006','1165374484','info@guru-kirpa.com','Sarmiento 2446, C1040AAB CABA','Buenos Aires','Argentina '),(17,'30240004488','El Rey','1109783921','1172756232','info@elrey.com','Larrea 238, C1030AAF CABA','Buenos Aires','Argentina '),(18,'30386435560','Redlimp','1190610767','1180732640','info@redlimp.com','Tte. Gral. Juan Domingo Perón 2699, C1884 Once, Buenos Aires','Buenos Aires','Argentina '),(19,'30416797108','Leo','1160010359','1187748162','contacto@leo.com','Lima 267, C1073 CABA','Buenos Aires','Argentina '),(20,'30996236044','Laura','1153046584','1116529058','info@laura.com','Larrea 251, C1030 AAE, Buenos Aires','Buenos Aires','Argentina ');
 /*!40000 ALTER TABLE `proveedores` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `ventas`
+--
+
+DROP TABLE IF EXISTS `ventas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ventas` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `id_cliente` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `id_categoria` int NOT NULL,
+  `v_cantidad` int NOT NULL,
+  `v_precio_u` float NOT NULL,
+  `v_descuento` float NOT NULL,
+  `v_precio_t` float NOT NULL,
+  `v_fecha` datetime NOT NULL,
+  `v_codigo_factura` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  KEY `id_producto` (`id_producto`),
+  KEY `id_categoria` (`id_categoria`),
+  CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`),
+  CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`),
+  CONSTRAINT `ventas_ibfk_3` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `ventas`
@@ -93,4 +231,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-24 17:48:03
+-- Dump completed on 2023-04-24 18:07:25
