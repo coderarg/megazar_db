@@ -205,7 +205,7 @@ INSERT INTO clientes (id_cliente, c_cuit_cuil, c_nombres, c_apellidos, c_email, 
 ('15', '20292707921', 'Sebastián', 'Gascón', 'sebastiangascon@gmail.com', '41922445', '1132982739', 'G. Pizarro 1646, Salta', 'Salta', 'Argentina', 'Laborum perferendis ipsam sequi, ullam obcaecati', '1', '2022-05-28 10:06:36'),
 ('16', '20862408889', 'Marta', 'Chacón', 'martachacon@gmail.com', '46054998', '1111166788', 'Dr. Luis Beláustegui 802, C1416CXH CABA', 'Buenos Aires', 'Argentina', 'aliquid modi ad cum minus libero quaerat', '1', '2022-04-01 16:40:12'),
 ('17', '20299615234', 'Lucía', 'Beneite', 'luciabeneite@gmail.com', '43506899', '1123400742', 'Sta. Teresita 1610, E3260 Concepción del Uruguay, Entre Ríos', 'Entre Ríos', 'Argentina', 'mollitia dolorem, doloribus vero minima ratione', '0', '2022-08-11 02:18:47'),
-('18', '20674109926', 'Carla', 'Azuero', 'carlaazuero@gmail.com', '44030424', '1153313087', 'Baigorria 501, M5521KJG, Mendoza', 'Mendoza', 'Argentina', 'pariatur aperiam nemo ', '0', '2022-12-31 23:59:59 '),
+('18', '20674109926', 'Carla', 'Azuero', 'carlaazuero@gmail.com', '44030424', '1153313087', 'Baigorria 501, M5521KJG, Mendoza', 'Mendoza', 'Argentina', 'pariatur aperiam nemo ', '0', '2022-12-31 23:59:59'),
 ('19', '20735532977', 'Carlos', 'Chourio', 'carloschourio@gmail.com', '41709390', '1173874846', 'Aviador Kingsley 2267, X5011CMG Córdoba', 'Córdoba', 'Argentina', 'possimus, soluta maiores laboriosam nemo', '0', '2022-07-17 08:33:58'),
 ('20', '20523284213', 'Patricia', 'Figueroa', 'patriciafigueroa@gmail.com', '42153057', '1144467610', 'Rivadavia 1199, Salta', 'Salta', 'Argentina', 'culpa possimus asperiores omnis', '0', '2022-06-24 21:01:05'),
 ('21', '20290244374', 'Ermenegildo', 'Lobo', 'ermenegildolobo@gmail.com', '45728529', '1136372504', 'Dr. Luis S Zurueta 408, Y4600 San Salvador, Jujuy', 'Jujuy', 'Argentina', 'aperiam nemo quibusdam accusamus iste rerum?', '1', '2022-03-15 12:09:44'),
@@ -316,6 +316,7 @@ INSERT INTO productos (id_producto, p_codigo, p_nombre, id_categoria, id_proveed
 SELECT *
 FROM productos;
 
+##INSERTAR VALORES EN TABLA "compras"
 INSERT INTO compras (id_compra, id_proveedor, id_producto, id_categoria, com_cantidad, com_precio_u, com_descuento, com_precio_t, com_fecha, com_codigo_factura) VALUES
 ('1', '5', '4', '1', '30', '2500', '0', '75000', '2021-10-02 01:23', '2022001'),
 ('2', '6', '35', '7', '30', '1900', '0', '57000', '2021-10-04 03:05', '2022002'),
@@ -370,9 +371,9 @@ INSERT INTO compras (id_compra, id_proveedor, id_producto, id_categoria, com_can
 
 #Verificación
 SELECT *
-FROM compras;
+FROM productos;
 
-
+##INSERTAR VALORES EN TABLA "ventas"
 INSERT INTO ventas (id_venta, id_cliente, id_producto, id_categoria, v_cantidad, v_precio_u, v_descuento, v_precio_t, v_fecha, v_codigo_factura) VALUES
 ('1', '7', '39', '6', '2', '2300', '0', '4600', '2022-01-01 00:00:00', 'V-2022001'),
 ('2', '7', '8', '1', '9', '12000', '5400', '102600', '2022-01-01 00:00:00', 'V-2022001'),
@@ -426,16 +427,9 @@ FROM ventas;
 #Rentabilidad: Relación entre costo y venta
 
 CREATE OR REPLACE VIEW ganancia_rentabilidad AS
-	#Tomo la tabla de productos y la comparo con compra y venta para ver diferencia costo / precios.
-	SELECT p.id_producto,
-	p.p_nombre,
-	costo_producto,
-	precio_producto,
-	(precio_producto - costo_producto) ganancia,
-	(costo_producto / precio_producto) rentabilidad
-	FROM productos p
-	LEFT JOIN(
-		SELECT a.id_producto,
+	WITH compras_ventas AS (
+		SELECT 
+        a.id_producto,
 		#traemos el precio por unidad con descuentos de proveedor aplicados
 		(SUM(com_precio_t) / SUM(com_cantidad)) costo_producto,
 		precio_producto
@@ -446,21 +440,33 @@ CREATE OR REPLACE VIEW ganancia_rentabilidad AS
 			FROM ventas
 			GROUP BY id_producto) b
 		ON a.id_producto = b.id_producto
-		GROUP BY id_producto) cv
-	ON p.id_producto = cv.id_producto
+		GROUP BY id_producto
+	)
+	SELECT 
+    p.id_producto,
+	p.p_nombre,
+	costo_producto,
+	precio_producto,
+	(precio_producto - costo_producto) ganancia,
+	(costo_producto / precio_producto) rentabilidad
+	FROM productos p
+		LEFT JOIN compras_ventas cv
+		ON p.id_producto = cv.id_producto
 	GROUP BY id_producto
 	HAVING ganancia IS NOT NULL OR rentabilidad IS NOT NULL
 	ORDER BY rentabilidad ASC; #productos con mayor rentabilidad primero
+
 
 #Verificación vista 'ganancia_rentabilidad'
 SELECT *
 FROM ganancia_rentabilidad;
 
-#2. Vista de mayores ganancias totales de los productos vendidos.
+#2. Vista de mayores ganancias totales por producto.
 
 #Traigo tabla de productos, compras y ventas.
 CREATE OR REPLACE VIEW mayores_ganancias AS
-    SELECT p.id_producto,
+    SELECT 
+    p.id_producto,
 	p.p_nombre,
     cantidad,
 	costo_producto,
@@ -486,6 +492,7 @@ CREATE OR REPLACE VIEW mayores_ganancias AS
 	GROUP BY id_producto
     HAVING ganancia_total IS NOT null
     ORDER BY ganancia_total DESC;
+
 
 #Verifico vista 'mayores_ganancias'
 SELECT *
